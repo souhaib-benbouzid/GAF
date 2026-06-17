@@ -1,73 +1,48 @@
-# React + TypeScript + Vite
+# Government Announcements Feed
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a React-based web application designed to display government announcements in a user-friendly format. It features a clean UI, categorization of announcements, filtering options, and the ability for users to bookmark important posts. The application is built with TypeScript for type safety and maintainability.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+To run the application locally, follow these steps:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+ npm install && npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This will install the necessary dependencies and start the development server. You can access the application at `http://localhost:3000`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Architecture Decision
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- The application is structured around a global state context to manage the announcements data and user interactions such as bookmarking. This approach allows for efficient state management and ensures that components can access and update the state without prop drilling.
+
+- The `AnnouncementContext` provides a centralized store for the announcements and bookmarked IDs, along with functions to fetch data and toggle bookmarks. This design promotes separation of concerns and makes it easier to maintain and scale the application in the future.
+
+- Bookmarked IDs are stored in a `Set` to optimize lookup times when determining if an announcement is bookmarked, which is crucial for performance as the number of announcements grows.
+
+- LocalStorage is used to persist the bookmarked IDs across sessions, ensuring that users do not lose their saved announcements when they refresh the page or close the browser.
+
+- Announcements are fetched from a mock API and stored in the context state. The application checks if the announcements have already been loaded to avoid unnecessary network requests, improving performance and user experience.
+
+- Because JSON data from the mock API is static and does not change, the application does not implement real-time updates or polling. However, for a production application, implement a batched retrieval request (e.g., `GET /announcements?ids=...`) to validate bookmark existence and fetch fresh content on application boot.
+
+### 🧠 Deep-Dive: State Architecture & Complexity Analysis
+
+A core challenge of this application is balancing state mutability constraints with optimal interface responsiveness during continuous user interactions (such as real-time filtering and text search matches).
+
+#### 1. Runtime Set Optimization for Card Grid Feeds
+
+To evaluate whether an individual announcement card displays an active bookmark state (`★` vs `☆`), the component must read the saved selections state.
+
+- **The Traditional Array Fallback:** Utilizing an array matrix requires execution of `Array.prototype.includes()` for every list item. Across a feed of N announcements against a list of B bookmarks, rendering scales at an expensive linear-scan time complexity of **O(N × B)**. As a user types into the input query field, this iterative scanning repeats on every single render frame, risking frame drops or stuttering.
+- **The Implemented Set Solution:** This application migrates index states into a native JavaScript `Set` object structure. Checking for properties via `Set.prototype.has()` executes via internal hash tables at an instantaneous constant time complexity of **O(1)**. This reduces overall feed rendering costs down to a highly scalable **O(N)** computational baseline.
+
+#### 2. The React Immutability Trade-Off
+
+Because React’s reconciliation engine determines component updates through shadow-comparison of state object memory references, directly mutating a `Set` (e.g., `set.add(id)`) will fail to trigger a screen re-render.
+
+To ensure the UI updates reliably, the toggle action instantiates a shallow copy:
+
+```typescript
+const nextSet = new Set(prev);
 ```
