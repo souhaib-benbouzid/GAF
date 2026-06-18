@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router";
 import AnnouncementCard from "../components/AnnouncementCard/AnnouncementCard";
+import { FilterBar } from "../components/FilterBar/FilterBar";
 import { useAnnouncements } from "../context/AnnouncementContext";
+import { FILTER_CATEGORIES, type CategoryFilter } from "../types/announcement";
 import styles from "./announcements.module.css";
 
 export default function AnnouncementsPage() {
@@ -15,29 +17,34 @@ export default function AnnouncementsPage() {
   } = useAnnouncements();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
-  const selectedCategory = searchParams.get("category") || "All";
+  const selectedCategory =
+    (searchParams.get("category") as CategoryFilter) || "All";
 
   useEffect(() => {
     fetchAnnouncements();
   }, [fetchAnnouncements]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchParams((prev) => {
-      if (!value) prev.delete("search");
-      else prev.set("search", value);
-      return prev;
-    });
-  };
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchParams((prev) => {
+        if (!value) prev.delete("search");
+        else prev.set("search", value);
+        return prev;
+      });
+    },
+    [setSearchParams],
+  );
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setSearchParams((prev) => {
-      if (value === "All") prev.delete("category");
-      else prev.set("category", value);
-      return prev;
-    });
-  };
+  const handleCategoryChange = useCallback(
+    (value: string) => {
+      setSearchParams((prev) => {
+        if (value === "All") prev.delete("category");
+        else prev.set("category", value);
+        return prev;
+      });
+    },
+    [setSearchParams],
+  );
 
   const filteredAnnouncements = announcements.filter((item) => {
     const matchesSearch =
@@ -83,26 +90,13 @@ export default function AnnouncementsPage() {
         </p>
       </div>
 
-      <div className={styles.searchBar}>
-        <input
-          type="text"
-          placeholder="Filter notices by keywords or details..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-          className={styles.inputField}
-        />
-        <select
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-          className={styles.selectField}
-        >
-          <option value="All">All Categories</option>
-          <option value="Health">Health</option>
-          <option value="Transport">Transport</option>
-          <option value="Education">Education</option>
-          <option value="Infrastructure">Infrastructure</option>
-        </select>
-      </div>
+      <FilterBar
+        searchQuery={searchQuery}
+        selectedCategory={selectedCategory}
+        onSearchChange={handleSearchChange}
+        onCategoryChange={handleCategoryChange}
+        categories={FILTER_CATEGORIES}
+      />
 
       {filteredAnnouncements.length === 0 ? (
         <div className={styles.centerState}>

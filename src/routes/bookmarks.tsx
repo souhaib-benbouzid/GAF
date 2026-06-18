@@ -1,6 +1,7 @@
 import React from "react";
 import { useSearchParams } from "react-router";
 import AnnouncementCard from "../components/AnnouncementCard/AnnouncementCard";
+import { FilterBar } from "../components/FilterBar/FilterBar";
 import { useAnnouncements } from "../context/AnnouncementContext";
 import listStyles from "./announcements.module.css";
 
@@ -28,20 +29,20 @@ export const Bookmarks: React.FC = () => {
     new Set(bookmarkedList.map((item) => item.category)),
   );
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (value: string) => {
     const nextParams = new URLSearchParams(searchParams);
-    if (e.target.value) {
-      nextParams.set("search", e.target.value);
+    if (value) {
+      nextParams.set("search", value);
     } else {
       nextParams.delete("search");
     }
     setSearchParams(nextParams);
   };
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleCategoryChange = (value: string) => {
     const nextParams = new URLSearchParams(searchParams);
-    if (e.target.value) {
-      nextParams.set("category", e.target.value);
+    if (value) {
+      nextParams.set("category", value);
     } else {
       nextParams.delete("category");
     }
@@ -68,27 +69,13 @@ export const Bookmarks: React.FC = () => {
       </header>
 
       {bookmarkedList.length > 0 && (
-        <div className={listStyles.searchBar}>
-          <input
-            type="text"
-            placeholder="Search saved notices..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className={listStyles.inputField}
-          />
-          <select
-            value={categoryQuery}
-            onChange={handleCategoryChange}
-            className={listStyles.selectField}
-          >
-            <option value="">All Saved Categories</option>
-            {existingCategories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FilterBar
+          searchQuery={searchQuery}
+          selectedCategory={categoryQuery}
+          onSearchChange={handleSearchChange}
+          onCategoryChange={handleCategoryChange}
+          categories={existingCategories}
+        />
       )}
 
       {bookmarkedList.length === 0 ? (
