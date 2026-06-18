@@ -106,6 +106,7 @@
   line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  max-width: 900px;
 }
 
 .footer {

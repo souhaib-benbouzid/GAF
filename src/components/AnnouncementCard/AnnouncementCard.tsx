@@ -34,7 +34,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
       </div>
 
       <h3 className={styles.title}>{announcement.title}</h3>
-      <p className={styles.body}>{announcement.body.substring(0, 120)}...</p>
+      <p className={styles.body}>{announcement.body}</p>
 
       <div className={styles.footer}>
         <Link
