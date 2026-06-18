@@ -136,3 +136,23 @@
 .retryBtn:hover {
   background-color: var(--primary-hover);
 }
+
+.backButtonWrapper {
+  margin-bottom: 1.5rem;
+}
+
+.detailCardOverride {
+  cursor: default !important;
+  min-height: auto !important;
+  padding: 2rem !important;
+}
+
+.detailBody {
+  display: block !important;
+  overflow: visible !important;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin: 1.5rem 0 2.5rem;
+}

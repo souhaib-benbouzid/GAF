@@ -3,7 +3,7 @@ import { NavigationBar } from "./components/NavigationBar/NavigationBar";
 import { AnnouncementProvider } from "./context/AnnouncementProvider";
 import AnnouncementsPage from "./routes/announcements";
 import BookmarksPage from "./routes/bookmarks";
-import DetailsPageRoute from "./routes/details-route";
+import DetailsPageRoute from "./routes/details";
 
 export default function Root() {
   return (
