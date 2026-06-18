@@ -28,6 +28,6 @@ Because React’s reconciliation engine determines component updates through sha
 const nextSet = new Set(prevSet);
 ```
 
-## Infinite Scroll & Pagination Limitations
+## Virtualized List Rendering
 
-Due to the lack of time to implement custom virtualized lists or pagination, the application currently loads and renders all announcements at once. This design choice leads to significant performance issues as the dataset grows, resulting in slow load times, high memory usage, and a poor user experience.
+To handle large datasets efficiently, the list of announcements is rendered using a virtualized list approach. This technique only renders the items that are currently visible in the viewport, significantly improving performance when dealing with large datasets. The `useVirtualList` hook manages the calculation of visible items based on the current scroll position and the height of each item, ensuring that only a subset of announcements is rendered at any given time.
