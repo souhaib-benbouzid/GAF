@@ -1,29 +1,21 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useSearchParams } from "react-router";
-import AnnouncementCard from "../components/AnnouncementCard/AnnouncementCard";
+import { AnnouncementList } from "../components/AnnouncementList/AnnouncementList";
 import { FilterBar } from "../components/FilterBar/FilterBar";
 import { useAnnouncements } from "../context/AnnouncementContext";
+import { useFetchAnnouncements } from "../hooks/useFetchAnnouncements";
 import { FILTER_CATEGORIES, type CategoryFilter } from "../types/announcement";
 import styles from "./announcements.module.css";
 
 export default function AnnouncementsPage() {
-  const {
-    announcements,
-    bookmarkedIds,
-    loading,
-    error,
-    fetchAnnouncements,
-    toggleBookmark,
-  } = useAnnouncements();
+  const { announcements, bookmarkedIds, loading, error, toggleBookmark } =
+    useAnnouncements();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
+  useFetchAnnouncements();
+
   const selectedCategory =
     (searchParams.get("category") as CategoryFilter) || "All";
-
-  useEffect(() => {
-    fetchAnnouncements();
-  }, [fetchAnnouncements]);
-
   const handleSearchChange = useCallback(
     (value: string) => {
       setSearchParams((prev) => {
@@ -97,24 +89,13 @@ export default function AnnouncementsPage() {
         onCategoryChange={handleCategoryChange}
         categories={FILTER_CATEGORIES}
       />
-
-      {filteredAnnouncements.length === 0 ? (
-        <div className={styles.centerState}>
-          <p>No active alerts or public matches.</p>
-        </div>
-      ) : (
-        <div className={styles.grid}>
-          {filteredAnnouncements.map((item) => (
-            <AnnouncementCard
-              key={item.id}
-              announcement={item}
-              isBookmarked={bookmarkedIds.has(item.id)}
-              onToggleBookmark={() => toggleBookmark(item.id)}
-              preserveSearchParams={`?${searchParams.toString()}`}
-            />
-          ))}
-        </div>
-      )}
+      <AnnouncementList
+        announcement={filteredAnnouncements}
+        bookmarkedIds={bookmarkedIds}
+        toggleBookmark={toggleBookmark}
+        searchParams={searchParams}
+        styles={styles}
+      />
     </div>
   );
 }

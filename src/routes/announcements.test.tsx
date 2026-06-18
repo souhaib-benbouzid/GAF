@@ -131,8 +131,6 @@ describe("Announcements Page", () => {
     ) as HTMLInputElement;
     fireEvent.change(searchInput, { target: { value: "xyz123abc" } });
 
-    expect(
-      screen.getByText(/No active alerts or public matches\./i),
-    ).toBeTruthy();
+    expect(screen.getByText(/No announcements found\./i)).toBeTruthy();
   });
 });

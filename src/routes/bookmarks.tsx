@@ -1,14 +1,15 @@
 import React from "react";
 import { useSearchParams } from "react-router";
-import AnnouncementCard from "../components/AnnouncementCard/AnnouncementCard";
+import { AnnouncementList } from "../components/AnnouncementList/AnnouncementList";
 import { FilterBar } from "../components/FilterBar/FilterBar";
 import { useAnnouncements } from "../context/AnnouncementContext";
+import { useFetchAnnouncements } from "../hooks/useFetchAnnouncements";
 import listStyles from "./announcements.module.css";
 
 export const Bookmarks: React.FC = () => {
   const { announcements, bookmarkedIds, toggleBookmark, loading } =
     useAnnouncements();
-
+  useFetchAnnouncements();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
   const categoryQuery = searchParams.get("category") || "";
@@ -26,7 +27,7 @@ export const Bookmarks: React.FC = () => {
   });
 
   const existingCategories = Array.from(
-    new Set(bookmarkedList.map((item) => item.category)),
+    new Set(["All", ...bookmarkedList.map((item) => item.category)]),
   );
 
   const handleSearchChange = (value: string) => {
@@ -41,7 +42,7 @@ export const Bookmarks: React.FC = () => {
 
   const handleCategoryChange = (value: string) => {
     const nextParams = new URLSearchParams(searchParams);
-    if (value) {
+    if (value && value !== "All") {
       nextParams.set("category", value);
     } else {
       nextParams.delete("category");
@@ -69,41 +70,31 @@ export const Bookmarks: React.FC = () => {
       </header>
 
       {bookmarkedList.length > 0 && (
-        <FilterBar
-          searchQuery={searchQuery}
-          selectedCategory={categoryQuery}
-          onSearchChange={handleSearchChange}
-          onCategoryChange={handleCategoryChange}
-          categories={existingCategories}
-        />
+        <>
+          <FilterBar
+            searchQuery={searchQuery}
+            selectedCategory={categoryQuery}
+            onSearchChange={handleSearchChange}
+            onCategoryChange={handleCategoryChange}
+            categories={existingCategories}
+          />
+          <AnnouncementList
+            announcement={filteredBookmarks}
+            bookmarkedIds={bookmarkedIds}
+            toggleBookmark={toggleBookmark}
+            searchParams={searchParams}
+            styles={listStyles}
+          />
+        </>
       )}
 
-      {bookmarkedList.length === 0 ? (
+      {bookmarkedList.length === 0 && (
         <div className={listStyles.centerState}>
           <h3>No bookmarks found</h3>
           <p>
             When viewing circulars, click "Bookmark" to preserve critical
             announcements here.
           </p>
-        </div>
-      ) : filteredBookmarks.length === 0 ? (
-        <div className={listStyles.centerState}>
-          <h3>No matching records</h3>
-          <p>
-            No bookmarked circulars correspond to your active filter options.
-          </p>
-        </div>
-      ) : (
-        <div className={listStyles.grid}>
-          {filteredBookmarks.map((item) => (
-            <AnnouncementCard
-              key={item.id}
-              announcement={item}
-              isBookmarked={true}
-              onToggleBookmark={() => toggleBookmark(item.id)}
-              preserveSearchParams={`?${searchParams.toString()}`}
-            />
-          ))}
         </div>
       )}
     </div>

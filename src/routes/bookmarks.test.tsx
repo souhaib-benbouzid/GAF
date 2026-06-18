@@ -64,7 +64,7 @@ describe("Bookmarks Page", () => {
     renderBookmarksRoute({ bookmarkedIds: new Set<number>([1, 2]) });
 
     const searchInput = screen.getByPlaceholderText(
-      "Search saved notices...",
+      "Filter notices by keywords or details...",
     ) as HTMLInputElement;
     fireEvent.change(searchInput, { target: { value: "Highway" } });
 
