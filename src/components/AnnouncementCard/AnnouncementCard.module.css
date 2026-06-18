@@ -1,0 +1,176 @@
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
+  min-height: 280px;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: #cbd5e1;
+}
+
+/* Top Meta Row holding Category Tag & Urgent Tag */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  background-color: #f1f5f9;
+  color: var(--text-secondary);
+}
+
+/* Dynamic Categorization Color Tokens — all on a consistent
+   light-tint / saturated-text recipe so the set reads as one
+   coherent family rather than ad-hoc colors. Hues are spaced
+   away from the urgent red so category never gets mistaken
+   for an alert. */
+.infrastructure {
+  background-color: #e0f2fe;
+  color: #0369a1; /* sky */
+}
+.health {
+  background-color: #dcfce7;
+  color: #15803d; /* green */
+}
+.finance {
+  background-color: #fef3c7;
+  color: #92400e; /* amber, darkened slightly for contrast */
+}
+.legal {
+  background-color: #ede9fe;
+  color: #5b21b6; /* violet */
+}
+.transport {
+  background-color: #ffedd5;
+  color: #c2410c; /* orange */
+}
+.education {
+  background-color: #e0e7ff;
+  color: #4338ca; /* indigo */
+}
+
+.urgentTag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-urgent);
+  color: var(--accent-urgent);
+  border: 1px solid var(--border-urgent);
+  animation: pulse 2s infinite ease-in-out;
+}
+
+/* Middle Content Sections */
+.title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text-primary);
+  margin: 0 0 0.75rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.body {
+  font-size: 0.925rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 1.5rem 0;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+  margin-top: auto;
+}
+
+.readMore {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.readMore:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+.bookmarkBtn {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+}
+
+.bookmarkBtn:hover {
+  background-color: #f1f5f9;
+  color: var(--text-primary);
+}
+
+.bookmarked {
+  color: #eab308 !important;
+  font-weight: 600;
+}
+
+.bookmarked:hover {
+  background-color: #fef9c3;
+}
+
+.urgentCard {
+  border-left: 4px solid var(--accent-urgent);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.85;
+  }
+}

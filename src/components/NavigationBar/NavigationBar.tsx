@@ -1,14 +1,40 @@
-export const NavigationBar = () => {
+import React from "react";
+import { Link, NavLink } from "react-router"; // Added Link
+import { useAnnouncements } from "../../context/AnnouncementContext";
+import styles from "./NavigationBar.module.css";
+
+export const NavigationBar: React.FC = () => {
+  const { bookmarkedIds } = useAnnouncements();
+
   return (
-    <header style={{ padding: "1rem", background: "#003366", color: "#fff" }}>
-      <nav>
-        <a href="/announcements" style={{ marginRight: "1rem", color: "#fff" }}>
+    <nav className={styles.navbar}>
+      <Link to="/" className={styles.brand}>
+        GovPortal
+      </Link>
+
+      <div className={styles.navLinks}>
+        <NavLink
+          to="/announcements"
+          className={({ isActive }) =>
+            isActive ? styles.activeLink : styles.link
+          }
+        >
           Announcements
-        </a>
-        <a href="/bookmarks" style={{ color: "#fff" }}>
+        </NavLink>
+        <NavLink
+          to="/bookmarks"
+          className={({ isActive }) =>
+            isActive ? styles.activeLink : styles.link
+          }
+        >
           Bookmarks
-        </a>
-      </nav>
-    </header>
+          {bookmarkedIds.size > 0 && (
+            <span className={styles.badge}>{bookmarkedIds.size}</span>
+          )}
+        </NavLink>
+      </div>
+    </nav>
   );
 };
+
+export default NavigationBar;
